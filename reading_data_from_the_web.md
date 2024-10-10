@@ -77,3 +77,62 @@ nyc_cost_df
     ## 6 Utilities        150.5%     115.9%     100.0%         
     ## 7 Transportation   181.1      140.7      100.0          
     ## 8 Miscellaneous    136.4      121.8      100.0
+
+star wars example
+
+``` r
+swm_url = "https://www.imdb.com/list/ls070150896/"
+
+swm_html = 
+  read_html(swm_url)
+```
+
+``` r
+title_vec = 
+  swm_html |>
+  html_elements(".ipc-title-link-wrapper .ipc-title__text") |>
+  html_text()
+
+metascore_vec =
+  swm_html |>
+  html_elements(".dli-title-metadata-item:nth-child(2)") |>
+  html_text()
+  
+runtime_vec = 
+  swm_html |>
+  html_elements(".metacritic-score-box") |>
+  html_text()
+
+swm_df = 
+  tibble(
+    title = title_vec,
+    score = metascore_vec,
+    runtime = runtime_vec)
+```
+
+``` r
+url = "http://books.toscrape.com"
+
+books_html = read_html(url)
+
+books_titles = 
+  books_html |>
+   html_elements("h3") |>
+  html_text2()
+  
+books_stars = 
+  books_html |>
+  html_elements(".star-rating") |>
+  html_attr("class")
+
+books_price = 
+  books_html |>
+  html_elements(".price_color") |>
+  html_text()
+
+books = tibble(
+  title = books_titles,
+  stars = books_stars,
+  price = books_price
+)
+```

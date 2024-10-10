@@ -47,3 +47,93 @@ nyc_cost_df =
 nyc_cost_df
 ```
 
+star wars example
+```{r}
+swm_url = "https://www.imdb.com/list/ls070150896/"
+
+swm_html = 
+  read_html(swm_url)
+```
+
+```{r}
+title_vec = 
+  swm_html |>
+  html_elements(".ipc-title-link-wrapper .ipc-title__text") |>
+  html_text()
+
+metascore_vec =
+  swm_html |>
+  html_elements(".dli-title-metadata-item:nth-child(2)") |>
+  html_text()
+  
+runtime_vec = 
+  swm_html |>
+  html_elements(".metacritic-score-box") |>
+  html_text()
+
+swm_df = 
+  tibble(
+    title = title_vec,
+    score = metascore_vec,
+    runtime = runtime_vec)
+```
+  
+```{r}
+url = "http://books.toscrape.com"
+
+books_html = read_html(url)
+
+books_titles = 
+  books_html |>
+   html_elements("h3") |>
+  html_text2()
+  
+books_stars = 
+  books_html |>
+  html_elements(".star-rating") |>
+  html_attr("class")
+
+books_price = 
+  books_html |>
+  html_elements(".price_color") |>
+  html_text()
+
+books = tibble(
+  title = books_titles,
+  stars = books_stars,
+  price = books_price
+)
+```
+
+### USE API 
+
+get water data 
+```{r}
+nyc_water = 
+  GET("https://data.cityofnewyork.us/resource/ia2d-e54m.csv") |> 
+  content("parsed")
+```
+
+```{r}
+view(nyc_water)
+```
+
+```{r}
+nyc_water = 
+  GET("https://data.cityofnewyork.us/resource/ia2d-e54m.json") |> 
+  content("text") |>
+  jsonlite::fromJSON() |>
+  as_tibble()
+```
+
+```{r}
+brfss_smart2010 = 
+  GET("https://chronicdata.cdc.gov/resource/acme-vg9e.csv",
+      query = list("$limit" = 5000)) |> 
+  content("parsed")
+```
+
+```{r}
+view(brfss_smart2010)
+```
+
